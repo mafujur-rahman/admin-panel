@@ -3,6 +3,7 @@ import { FaBell, FaBox, FaSearch, FaTachometerAlt, FaUserCircle, FaUsers } from 
 import { MdAdd } from "react-icons/md";
 import Users from "./Users/Users";
 import Stats from "./Stats";
+import Products from "./Products/Products";
 
 const AdminDashboard = () => {
     const [viewMode, setViewMode] = useState("stats");
@@ -36,7 +37,7 @@ const AdminDashboard = () => {
             </div>
 
             {/* Main Content */}
-            <div className="w-4/5 bg-white p-5">
+            <div className="w-4/5  p-5">
                 {/* Top Navbar */}
                 <div className="flex justify-between items-center border-b-2 pb-3">
                     {/* Search */}
@@ -56,9 +57,10 @@ const AdminDashboard = () => {
                 </div>
 
                 {/* Conditional Rendering */}
-                {viewMode === "stats" && <Stats />}
-                {viewMode === "users" && <Users />}
-                {viewMode === "products" && <h1>Products</h1>}
+                    {viewMode === "stats" && <Stats />}
+                    {viewMode === "users" && <Users />}
+                    {viewMode === "products" && <Products />}
+                
             </div>
         </div>
     );
