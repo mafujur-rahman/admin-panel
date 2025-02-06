@@ -5,6 +5,7 @@ import { FaBox, FaDollarSign, FaShoppingCart, FaUsers } from "react-icons/fa";
 
 const Stats = () => {
     const [users, setUsers] = useState([]);
+    const [products, setProducts] = useState([]);
 
     // users data
     useEffect(() =>{
@@ -12,6 +13,15 @@ const Stats = () => {
         .then(res => setUsers(res.data))
         .catch(error => console.error(error))
     },[]);
+
+
+    // products data
+    useEffect(() => {
+        axios.get('https://api.restful-api.dev/objects')
+            .then(res => setProducts(res.data))
+            .catch(error => console.error(error))
+    }, []);
+
 
     return (
         <div className="grid grid-cols-4 gap-6 mt-6">
@@ -25,7 +35,7 @@ const Stats = () => {
             {/* Total Products */}
             <div className="bg-white shadow-lg p-6 rounded-md flex flex-col items-center border">
                 <FaBox size={40} className="text-[#EE4E5B]" />
-                <h2 className="text-xl font-bold">53</h2>
+                <h2 className="text-xl font-bold">{products.length}</h2>
                 <p className="text-gray-500">Products</p>
             </div>
 
