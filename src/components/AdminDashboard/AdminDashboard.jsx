@@ -4,9 +4,11 @@ import { MdAdd } from "react-icons/md";
 import Users from "./Users/Users";
 import Stats from "./Stats";
 import Products from "./Products/Products";
+import AddProductModal from "./Products/AddProductModal";
 
 const AdminDashboard = () => {
     const [viewMode, setViewMode] = useState("stats");
+    const [modalOpen, setModalOpen] = useState(false);
 
 
     // Handle navigation
@@ -47,7 +49,7 @@ const AdminDashboard = () => {
                     </div>
 
                     {/* Right Side Icons */}
-                    <div className="flex items-center gap-4">
+                    <div onClick={() => setModalOpen(true)} className="flex items-center gap-4">
                         <button className="bg-[#EE4E5B] text-white px-4 py-2 rounded-md flex items-center gap-2 font-semibold">
                             <MdAdd size={18} /> Add New
                         </button>
@@ -55,6 +57,9 @@ const AdminDashboard = () => {
                         <FaUserCircle size={32} className="text-gray-600 cursor-pointer" />
                     </div>
                 </div>
+
+                {/* Modal */}
+                <AddProductModal isOpen={modalOpen} onClose={() => setModalOpen(false)} />
 
                 {/* Conditional Rendering */}
                     {viewMode === "stats" && <Stats />}

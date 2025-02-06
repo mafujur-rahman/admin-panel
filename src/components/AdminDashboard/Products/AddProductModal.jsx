@@ -1,29 +1,28 @@
 import axios from "axios";
 import Swal from "sweetalert2";
 
-
-const AddProductModal = ({ isOpen, onClose }) => {
-
+const AddProductModal = ({ isOpen, onClose, setProductId }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         const form = e.target;
-        const id = form.id.value;
+        const id = Date.now().toString();
         const name = form.name.value;
         const color = form.color.value;
         const capacity = form.capacity.value;
-        const newProduct = { id, name, color, capacity };
+        const newProduct = { id, name, data: { color, capacity } };
 
         try {
-            await axios.post('https://api.restful-api.dev/objects', newProduct)
+            const response = await axios.post("https://api.restful-api.dev/objects", newProduct); 
+            setProductId(response.data.id); 
+            
             Swal.fire({
-                title: "Drag me!",
-                icon: "Product Added Successfully!",
-                draggable: true
+                title: "Product Added Successfully!",
+                icon: "success",
             });
             onClose();
         } catch (error) {
-            console.error('Error adding product', error)
+            console.error("Error adding product", error);
             Swal.fire({
                 icon: "error",
                 title: "Oops...",
@@ -39,7 +38,6 @@ const AddProductModal = ({ isOpen, onClose }) => {
             <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-lg">
                 <h2 className="text-2xl font-bold text-[#EE4E5B] mb-4">Add New Product</h2>
                 <form onSubmit={handleSubmit} className="space-y-4">
-                    <input type="text" name="id" placeholder="Product ID" className="w-full p-2 border rounded" required />
                     <input type="text" name="name" placeholder="Product Name" className="w-full p-2 border rounded" required />
                     <input type="text" name="color" placeholder="Color" className="w-full p-2 border rounded" required />
                     <input type="text" name="capacity" placeholder="Capacity" className="w-full p-2 border rounded" required />
