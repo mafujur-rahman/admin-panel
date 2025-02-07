@@ -1,19 +1,52 @@
-import { useState } from "react";
-import { FaBell, FaBox, FaSearch, FaTachometerAlt, FaUserCircle, FaUsers } from "react-icons/fa";
+import { useEffect, useState } from "react";
+import { FaBell, FaBox, FaDollarSign, FaSearch, FaShoppingCart, FaTachometerAlt, FaUserCircle, FaUsers } from "react-icons/fa";
 import { MdAdd } from "react-icons/md";
 import Users from "./Users/Users";
-import Stats from "./Stats";
 import Products from "./Products/Products";
 import AddProductModal from "./Products/AddProductModal";
+import axios from "axios";
+import { RiDeleteBin5Line } from "react-icons/ri";
+
 
 const AdminDashboard = () => {
     const [viewMode, setViewMode] = useState("stats");
+    const [users, setUsers] = useState([]);
+    const [products, setProducts] = useState([]);
     const [modalOpen, setModalOpen] = useState(false);
+    const [newProducts, setNewProducts] = useState([]);
+
+    // users data
+    useEffect(() => {
+        axios.get('https://jsonplaceholder.typicode.com/users')
+            .then(res => setUsers(res.data))
+            .catch(error => console.error(error))
+    }, []);
+
+
+    // products data
+    useEffect(() => {
+        axios.get('https://api.restful-api.dev/objects')
+            .then(res => setProducts(res.data))
+            .catch(error => console.error(error))
+    }, []);
 
 
     // Handle navigation
     const handleNavigation = (mode) => {
         setViewMode(mode);
+    };
+
+    // handle add products
+    const handleAddProduct = async (newProduct) => {
+        try {
+            const response = await axios.get(`https://api.restful-api.dev/objects/${newProduct.id}`);
+
+            if (response.data) {
+                setNewProducts([...newProducts, response.data]);
+            }
+        } catch (error) {
+            console.error("Error fetching newly added product", error);
+        }
     };
 
     return (
@@ -39,7 +72,7 @@ const AdminDashboard = () => {
             </div>
 
             {/* Main Content */}
-            <div className="w-4/5  p-5">
+            <div className="w-4/5 p-5">
                 {/* Top Navbar */}
                 <div className="flex justify-between items-center border-b-2 pb-3">
                     {/* Search */}
@@ -59,13 +92,86 @@ const AdminDashboard = () => {
                 </div>
 
                 {/* Modal */}
-                <AddProductModal isOpen={modalOpen} onClose={() => setModalOpen(false)} />
+                <AddProductModal isOpen={modalOpen} onClose={() => setModalOpen(false)} onAddProduct={handleAddProduct} />
 
                 {/* Conditional Rendering */}
-                    {viewMode === "stats" && <Stats />}
-                    {viewMode === "users" && <Users />}
-                    {viewMode === "products" && <Products />}
-                
+                {viewMode === "stats" && <div className="p-6">
+                    {/* Stats Grid */}
+                    <div className="grid grid-cols-4 gap-6 mt-6">
+                        {/* Total Users */}
+                        <div className="bg-white shadow-lg p-6 rounded-md flex flex-col items-center border">
+                            <FaUsers size={40} className="text-[#EE4E5B]" />
+                            <h2 className="text-xl font-bold">{users.length}</h2>
+                            <p className="text-gray-500">Users</p>
+                        </div>
+
+                        {/* Total Products */}
+                        <div className="bg-white shadow-lg p-6 rounded-md flex flex-col items-center border">
+                            <FaBox size={40} className="text-[#EE4E5B]" />
+                            <h2 className="text-xl font-bold">{products.length}</h2>
+                            <p className="text-gray-500">Products</p>
+                        </div>
+
+                        {/* Total Orders */}
+                        <div className="bg-white shadow-lg p-6 rounded-md flex flex-col items-center border">
+                            <FaShoppingCart size={40} className="text-[#EE4E5B]" />
+                            <h2 className="text-xl font-bold">5</h2>
+                            <p className="text-gray-500">Orders</p>
+                        </div>
+
+                        {/* Total Revenue */}
+                        <div className="bg-white shadow-lg p-6 rounded-md flex flex-col items-center border">
+                            <FaDollarSign size={40} className="text-[#EE4E5B]" />
+                            <h2 className="text-xl font-bold">$350,000</h2>
+                            <p className="text-gray-500">Revenue</p>
+                        </div>
+                    </div>
+
+                    {/* 🆕 New Products List Section Below */}
+                    <div className="mt-6">
+                        <div className="max-w-sm bg-white shadow-lg rounded-lg p-4">
+                            <div className="flex justify-between items-center border-b pb-2">
+                                <h2 className="text-2xl font-bold mb-4 text-[#EE4E5B]">New Products</h2>
+                            </div>
+                            <table className="w-full mt-3">
+                                <thead>
+                                    <tr className="border-b text-left text-gray-600 text-sm">
+                                        <th className="py-2">Profile</th>
+                                        <th className="py-2">Name</th>
+                                        <th className="py-2">Color</th>
+                                        <th className="py-2 text-center">Option</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {newProducts.length > 0 ? (
+                                        newProducts.map((product) => (
+                                            <tr key={product.id} className="border-b">
+                                                <td className="py-2">
+                                                    <div className="w-8 h-8 rounded-full bg-blue-200 flex items-center justify-center">
+                                                        <span className="text-lg font-bold text-blue-600">🆕</span>
+                                                    </div>
+                                                </td>
+                                                <td className="py-2 text-sm">{product.name}</td>
+                                                <td className="py-2 text-sm">{product.data?.color || "N/A"}</td>
+                                                <td className="py-2 text-center">
+                                                    <button className="text-[#EE4E5B]">
+                                                    <RiDeleteBin5Line size={20} />
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        ))
+                                    ) : (
+                                        <tr>
+                                            <td colSpan="4" className="text-center text-gray-500 py-2">No products available.</td>
+                                        </tr>
+                                    )}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>}
+                {viewMode === "users" && <Users />}
+                {viewMode === "products" && <Products />}
             </div>
         </div>
     );
