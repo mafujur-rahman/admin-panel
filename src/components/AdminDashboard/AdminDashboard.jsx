@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { FaBell, FaBox, FaDollarSign, FaSearch, FaShoppingCart, FaTachometerAlt, FaUserCircle, FaUsers } from "react-icons/fa";
+import { FaBars, FaBox, FaDollarSign, FaShoppingCart, FaTachometerAlt, FaTimes, FaUserCircle, FaUsers } from "react-icons/fa";
 import { MdAdd } from "react-icons/md";
 import Users from "./Users/Users";
 import Products from "./Products/Products";
@@ -15,6 +15,7 @@ const AdminDashboard = () => {
     const [products, setProducts] = useState([]);
     const [modalOpen, setModalOpen] = useState(false);
     const [newProducts, setNewProducts] = useState([]);
+    const [sidebarOpen, setSidebarOpen] = useState(false);
 
     // users data
     useEffect(() => {
@@ -35,6 +36,7 @@ const AdminDashboard = () => {
     // Handle navigation
     const handleNavigation = (mode) => {
         setViewMode(mode);
+        setModalOpen(false)
     };
 
     // handle add products
@@ -76,12 +78,11 @@ const AdminDashboard = () => {
     };
 
     return (
-        <div className="container min-h-screen flex">
+        <div className="container min-h-screen flex flex-col md:flex-row">
             {/* Sidebar */}
-            <div className="w-1/5 min-h-screen bg-[#EE4E5B] p-5 text-white">
-                <h1 className="text-black text-center font-bold text-xl">
-                    Admin Dashboard
-                </h1>
+            <div className={`fixed md:relative top-0 left-0 h-screen bg-[#EE4E5B] p-5 text-white w-[70%] md:w-1/5 transition-all duration-300 ${sidebarOpen ? "translate-x-0" : "-translate-x-full"} md:translate-x-0`}>
+                <h1 className="text-black text-center font-bold text-xl">Admin Dashboard</h1>
+                <p className="w-full border border-white mt-5"></p>
 
                 {/* Sidebar Menu */}
                 <ul className="mt-6 space-y-4">
@@ -98,21 +99,23 @@ const AdminDashboard = () => {
             </div>
 
             {/* Main Content */}
-            <div className="w-4/5 p-5">
+            <div className="flex-1 p-5 md:ml-0">
+                {/* Mobile Menu Button */}
+                <div className="w-full flex justify-end">
+                    <button className="md:hidden p-2 bg-[#EE4E5B] text-white rounded-md mb-4"
+                        onClick={() => setSidebarOpen(!sidebarOpen)}>
+                        {sidebarOpen ? <FaTimes size={20} /> : <FaBars size={20} />}
+                    </button>
+                </div>
+
                 {/* Top Navbar */}
-                <div className="flex justify-between items-center border-b-2 pb-3">
-                    {/* Search */}
-                    <div className="flex items-center bg-gray-100 px-3 py-2 rounded-lg w-1/3">
-                        <input type="text" placeholder="Search..." className="bg-transparent outline-none w-full" />
-                        <FaSearch size={18} className="text-gray-500" />
-                    </div>
+                <div className="flex flex-col md:flex-row justify-between items-center border-b-2 pb-3 gap-3">
 
                     {/* Right Side Icons */}
-                    <div onClick={() => setModalOpen(true)} className="flex items-center gap-4">
-                        <button className="bg-[#EE4E5B] text-white px-4 py-2 rounded-md flex items-center gap-2 font-semibold">
+                    <div className="flex justify-between w-full items-center gap-4">
+                        <button onClick={() => setModalOpen(true)} className="bg-[#EE4E5B] text-white px-4 py-2 rounded-md flex items-center gap-2 font-semibold">
                             <MdAdd size={18} /> Add New
                         </button>
-                        <FaBell size={22} className="text-gray-600 cursor-pointer" />
                         <FaUserCircle size={32} className="text-gray-600 cursor-pointer" />
                     </div>
                 </div>
@@ -121,86 +124,90 @@ const AdminDashboard = () => {
                 <AddProductModal isOpen={modalOpen} onClose={() => setModalOpen(false)} onAddProduct={handleAddProduct} />
 
                 {/* Conditional Rendering */}
-                {viewMode === "stats" && <div className="p-6">
-                    {/* Stats Grid */}
-                    <div className="grid grid-cols-4 gap-6 mt-6">
-                        {/* Total Users */}
-                        <div className="bg-white shadow-lg p-6 rounded-md flex flex-col items-center border">
-                            <FaUsers size={40} className="text-[#EE4E5B]" />
-                            <h2 className="text-xl font-bold">{users.length}</h2>
-                            <p className="text-gray-500">Users</p>
-                        </div>
-
-                        {/* Total Products */}
-                        <div className="bg-white shadow-lg p-6 rounded-md flex flex-col items-center border">
-                            <FaBox size={40} className="text-[#EE4E5B]" />
-                            <h2 className="text-xl font-bold">{products.length}</h2>
-                            <p className="text-gray-500">Products</p>
-                        </div>
-
-                        {/* Total Orders */}
-                        <div className="bg-white shadow-lg p-6 rounded-md flex flex-col items-center border">
-                            <FaShoppingCart size={40} className="text-[#EE4E5B]" />
-                            <h2 className="text-xl font-bold">5</h2>
-                            <p className="text-gray-500">Orders</p>
-                        </div>
-
-                        {/* Total Revenue */}
-                        <div className="bg-white shadow-lg p-6 rounded-md flex flex-col items-center border">
-                            <FaDollarSign size={40} className="text-[#EE4E5B]" />
-                            <h2 className="text-xl font-bold">$350,000</h2>
-                            <p className="text-gray-500">Revenue</p>
-                        </div>
-                    </div>
-
-                    {/* 🆕 New Products List Section Below */}
-                    <div className="mt-6">
-                        <div className="max-w-sm bg-white shadow-lg rounded-lg p-4">
-                            <div className="flex justify-between items-center border-b pb-2">
-                                <h2 className="text-2xl font-bold mb-4 text-[#EE4E5B]">New Products</h2>
+                {viewMode === "stats" && (
+                    <div className="p-6">
+                        {/* Stats Grid */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-6">
+                            {/* Total Users */}
+                            <div className="bg-white shadow-lg p-6 rounded-md flex flex-col items-center border">
+                                <FaUsers size={40} className="text-[#EE4E5B]" />
+                                <h2 className="text-xl font-bold">{users.length}</h2>
+                                <p className="text-gray-500">Users</p>
                             </div>
-                            <table className="w-full mt-3">
-                                <thead>
-                                    <tr className="border-b text-left text-gray-600 text-sm">
-                                        <th className="py-2">Profile</th>
-                                        <th className="py-2">Name</th>
-                                        <th className="py-2">Color</th>
-                                        <th className="py-2 text-center">Option</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {newProducts.length > 0 ? (
-                                        newProducts.map((product) => (
-                                            <tr key={product.id} className="border-b">
-                                                <td className="py-2">
-                                                    <div className="w-8 h-8 rounded-full bg-blue-200 flex items-center justify-center">
-                                                        <span className="text-lg font-bold text-blue-600">🆕</span>
-                                                    </div>
-                                                </td>
-                                                <td className="py-2 text-sm">{product.name}</td>
-                                                <td className="py-2 text-sm">{product.data?.color || "N/A"}</td>
-                                                <td className="py-2 text-center">
-                                                    {/* delete button */}
-                                                    <button onClick={() => handleDelete(product?.id)} className="text-[#EE4E5B]">
-                                                        <RiDeleteBin5Line size={20} />
-                                                    </button>
+
+                            {/* Total Products */}
+                            <div className="bg-white shadow-lg p-6 rounded-md flex flex-col items-center border">
+                                <FaBox size={40} className="text-[#EE4E5B]" />
+                                <h2 className="text-xl font-bold">{products.length}</h2>
+                                <p className="text-gray-500">Products</p>
+                            </div>
+
+                            {/* Total Orders */}
+                            <div className="bg-white shadow-lg p-6 rounded-md flex flex-col items-center border">
+                                <FaShoppingCart size={40} className="text-[#EE4E5B]" />
+                                <h2 className="text-xl font-bold">5</h2>
+                                <p className="text-gray-500">Orders</p>
+                            </div>
+
+                            {/* Total Revenue */}
+                            <div className="bg-white shadow-lg p-6 rounded-md flex flex-col items-center border">
+                                <FaDollarSign size={40} className="text-[#EE4E5B]" />
+                                <h2 className="text-xl font-bold">$50,000</h2>
+                                <p className="text-gray-500">Revenue</p>
+                            </div>
+                        </div>
+
+                        {/* New Products List */}
+                        <div className="mt-6">
+                            <div className="max-w-full bg-white shadow-lg rounded-lg p-4">
+                                <div className="flex justify-between items-center border-b pb-2">
+                                    <h2 className="text-2xl font-bold mb-4 text-[#EE4E5B]">New Products</h2>
+                                </div>
+                                <table className="w-full mt-3 text-sm">
+                                    <thead>
+                                        <tr className="border-b text-left text-gray-600">
+                                            <th className="py-2">Profile</th>
+                                            <th className="py-2">Name</th>
+                                            <th className="py-2">Color</th>
+                                            <th className="py-2 text-center">Option</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {newProducts.length > 0 ? (
+                                            newProducts.map((product) => (
+                                                <tr key={product.id} className="border-b">
+                                                    <td className="py-2">
+                                                        <div className="w-8 h-8 rounded-full bg-blue-200 flex items-center justify-center">
+                                                            <span className="text-lg font-bold text-blue-600">🆕</span>
+                                                        </div>
+                                                    </td>
+                                                    <td className="py-2">{product.name}</td>
+                                                    <td className="py-2">{product.data?.color || "N/A"}</td>
+                                                    <td className="py-2 text-center">
+                                                        <button onClick={() => handleDelete(product?.id)} className="text-[#EE4E5B]">
+                                                            <RiDeleteBin5Line size={20} />
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            ))
+                                        ) : (
+                                            <tr>
+                                                <td colSpan="4" className="text-center text-gray-500 py-2">
+                                                    No products available.
                                                 </td>
                                             </tr>
-                                        ))
-                                    ) : (
-                                        <tr>
-                                            <td colSpan="4" className="text-center text-gray-500 py-2">No products available.</td>
-                                        </tr>
-                                    )}
-                                </tbody>
-                            </table>
+                                        )}
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
-                </div>}
+                )}
                 {viewMode === "users" && <Users />}
                 {viewMode === "products" && <Products />}
             </div>
         </div>
+
     );
 };
 
