@@ -6,6 +6,7 @@ import Products from "./Products/Products";
 import AddProductModal from "./Products/AddProductModal";
 import axios from "axios";
 import { RiDeleteBin5Line } from "react-icons/ri";
+import Swal from "sweetalert2";
 
 
 const AdminDashboard = () => {
@@ -47,6 +48,31 @@ const AdminDashboard = () => {
         } catch (error) {
             console.error("Error fetching newly added product", error);
         }
+    };
+
+    // handle delete button
+    const handleDelete = async (id) => {
+        Swal.fire({
+            title: "Are you sure?",
+            text: "You won't be able to revert this!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#d33",
+            cancelButtonColor: "#3085d6",
+            confirmButtonText: "Yes, delete it!",
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                try {
+                    await axios.delete(`https://api.restful-api.dev/objects/${id}`);
+                    setNewProducts(newProducts.filter((item) => item.id !== id));
+
+                    Swal.fire("Deleted!", "Your product has been deleted.", "success");
+                } catch (error) {
+                    Swal.fire("Error!", "Failed to delete the product.", "error");
+                    console.error("Error deleting product:", error);
+                }
+            }
+        });
     };
 
     return (
@@ -154,8 +180,9 @@ const AdminDashboard = () => {
                                                 <td className="py-2 text-sm">{product.name}</td>
                                                 <td className="py-2 text-sm">{product.data?.color || "N/A"}</td>
                                                 <td className="py-2 text-center">
-                                                    <button className="text-[#EE4E5B]">
-                                                    <RiDeleteBin5Line size={20} />
+                                                    {/* delete button */}
+                                                    <button onClick={() => handleDelete(product?.id)} className="text-[#EE4E5B]">
+                                                        <RiDeleteBin5Line size={20} />
                                                     </button>
                                                 </td>
                                             </tr>
