@@ -1,4 +1,5 @@
 import axios from "axios";
+import PropTypes from "prop-types";
 import Swal from "sweetalert2";
 
 const AddProductModal = ({ isOpen, onClose, onAddProduct }) => {
@@ -53,5 +54,11 @@ const AddProductModal = ({ isOpen, onClose, onAddProduct }) => {
     </div>
   );
 };
+
+AddProductModal.propTypes ={
+  isOpen: PropTypes.any,
+  onClose: PropTypes.any,
+  onAddProduct: PropTypes.func
+}
 
 export default AddProductModal;

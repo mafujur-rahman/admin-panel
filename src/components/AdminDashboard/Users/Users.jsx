@@ -14,7 +14,7 @@ const Users = () => {
             .catch(error => console.error(error));
     }, []);
 
-    // Filtered users based on search query
+    // Filtered users
     const filteredUsers = users.filter(user => {
         return (
             user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -52,7 +52,6 @@ const Users = () => {
         <div className="p-6 bg-white rounded-lg shadow-md mt-6">
             <h2 className="text-2xl font-bold mb-4 text-[#EE4E5B]">Users List</h2>
 
-            {/* Search Bar */}
             <input
                 type="text"
                 className="border border-[#EE4E5B] p-2 rounded-lg w-full mb-4"
@@ -61,56 +60,58 @@ const Users = () => {
                 onChange={(e) => setSearchQuery(e.target.value)}
             />
 
-            <table className="w-full border border-gray-300 rounded-lg overflow-hidden">
-                <thead>
-                    <tr className="bg-gray-100 text-[#EE4E5B]">
-                        <th
-                            className="border p-3 cursor-pointer"
-                            onClick={() => {
-                                setSortField("name");
-                                toggleSortOrder();
-                            }}
-                        >
-                            Name {sortField === "name" && (sortOrder === "asc" ? "↑" : "↓")}
-                        </th>
-                        <th
-                            className="border p-3 cursor-pointer"
-                            onClick={() => {
-                                setSortField("email");
-                                toggleSortOrder();
-                            }}
-                        >
-                            Email {sortField === "email" && (sortOrder === "asc" ? "↑" : "↓")}
-                        </th>
-                        <th
-                            className="border p-3 cursor-pointer"
-                            onClick={() => {
-                                setSortField("city");
-                                toggleSortOrder();
-                            }}
-                        >
-                            City {sortField === "city" && (sortOrder === "asc" ? "↑" : "↓")}
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {sortedUsers.length > 0 ? (
-                        sortedUsers.map((user, index) => (
-                            <tr key={user.id} className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}>
-                                <td className="border p-3 text-center text-gray-700">{user.name}</td>
-                                <td className="border p-3 text-center text-gray-600">{user.email}</td>
-                                <td className="border p-3 text-center text-gray-600">{user.address.city}</td>
-                            </tr>
-                        ))
-                    ) : (
-                        <tr>
-                            <td colSpan="3" className="text-center text-gray-500 p-4">
-                                No users found.
-                            </td>
+            <div className="overflow-x-auto">
+                <table className="w-full border border-gray-300 rounded-lg overflow-hidden">
+                    <thead>
+                        <tr className="bg-gray-100 text-[#EE4E5B]">
+                            <th
+                                className="border p-3 cursor-pointer text-sm md:text-base"
+                                onClick={() => {
+                                    setSortField("name");
+                                    toggleSortOrder();
+                                }}
+                            >
+                                Name {sortField === "name" && (sortOrder === "asc" ? "↑" : "↓")}
+                            </th>
+                            <th
+                                className="border p-3 cursor-pointer text-sm md:text-base"
+                                onClick={() => {
+                                    setSortField("email");
+                                    toggleSortOrder();
+                                }}
+                            >
+                                Email {sortField === "email" && (sortOrder === "asc" ? "↑" : "↓")}
+                            </th>
+                            <th
+                                className="border p-3 cursor-pointer text-sm md:text-base"
+                                onClick={() => {
+                                    setSortField("city");
+                                    toggleSortOrder();
+                                }}
+                            >
+                                City {sortField === "city" && (sortOrder === "asc" ? "↑" : "↓")}
+                            </th>
                         </tr>
-                    )}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        {sortedUsers.length > 0 ? (
+                            sortedUsers.map((user, index) => (
+                                <tr key={user.id} className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}>
+                                    <td className="border p-3 text-center text-gray-700">{user.name}</td>
+                                    <td className="border p-3 text-center text-gray-600">{user.email}</td>
+                                    <td className="border p-3 text-center text-gray-600">{user.address.city}</td>
+                                </tr>
+                            ))
+                        ) : (
+                            <tr>
+                                <td colSpan="3" className="text-center text-gray-500 p-4">
+                                    No users found.
+                                </td>
+                            </tr>
+                        )}
+                    </tbody>
+                </table>
+            </div>
         </div>
     );
 };

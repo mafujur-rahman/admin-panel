@@ -3,9 +3,9 @@ import { useEffect, useState } from "react";
 
 const Products = () => {
     const [products, setProducts] = useState([]);
-    const [searchQuery, setSearchQuery] = useState(""); // State for search query
-    const [sortField, setSortField] = useState("id"); // State for sorting
-    const [sortOrder, setSortOrder] = useState("asc"); // State for sorting order (asc or desc)
+    const [searchQuery, setSearchQuery] = useState(""); 
+    const [sortField, setSortField] = useState("id"); 
+    const [sortOrder, setSortOrder] = useState("asc"); 
 
     // Fetch products data
     useEffect(() => {
@@ -14,7 +14,7 @@ const Products = () => {
             .catch(error => console.error(error));
     }, []);
 
-    // Filtered products based on search query
+    // Filtered products
     const filteredProducts = products.filter(product => {
         return product.name.toLowerCase().includes(searchQuery.toLowerCase());
     });
@@ -41,7 +41,6 @@ const Products = () => {
         <div className="p-4 bg-white rounded-lg shadow-md mt-6">
             <h2 className="text-2xl font-bold mb-4 text-[#EE4E5B]">Products List</h2>
 
-            {/* Search Bar */}
             <input
                 type="text"
                 className="border p-2 rounded-lg w-full mb-4"
